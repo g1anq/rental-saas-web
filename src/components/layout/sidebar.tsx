@@ -3,11 +3,14 @@
 import { useState, useSyncExternalStore } from "react";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, Home, Users, FileText, ReceiptText, LogOut, Settings, Menu, BarChart3, Wrench, Bell, Building, UserPlus, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import type { LucideIcon } from "lucide-react";
+import { toast } from "sonner";
+import { fetchWithAuth } from "@/lib/auth-fetch";
 
 type NavItem = { name: string; href: string; icon: LucideIcon };
 
@@ -58,7 +61,7 @@ function SidebarNavLinks({
     <>
       <div className="p-6 pb-2 flex flex-col items-center text-center">
         <div className="relative w-20 h-20 overflow-hidden rounded-2xl shadow-xl ring-2 ring-white/50 mb-4 transition-transform hover:scale-105 duration-300">
-          <img src="/logo.png" alt="Rental SaaS Logo" className="w-full h-full object-cover" />
+          <Image src="/logo.png" alt="Rental SaaS Logo" fill sizes="80px" className="object-cover" />
         </div>
       </div>
 
@@ -115,11 +118,19 @@ export function Sidebar() {
 
   const navItems = role === 'tenant' ? tenantNavItems : landlordNavItems;
 
-  const handleLogout = () => {
-    document.cookie = "rental_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    localStorage.removeItem("rental_user");
-    router.push("/login");
-    router.refresh();
+  const handleLogout = async () => {
+    try {
+      const response = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+        method: "POST",
+      });
+      if (!response.ok) throw new Error("Không thể đăng xuất. Vui lòng thử lại.");
+
+      localStorage.removeItem("rental_user");
+      router.replace("/login");
+      router.refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Không thể đăng xuất");
+    }
   };
 
   return (
@@ -137,7 +148,7 @@ export function Sidebar() {
       <div className="md:hidden flex items-center justify-between gap-3 p-3 border border-white/60 bg-white/90 backdrop-blur-xl shadow-sm fixed top-2 left-3 z-50 rounded-2xl">
         <div className="flex items-center gap-3">
           <div className="relative w-8 h-8 overflow-hidden rounded-xl shadow-md ring-1 ring-white/50">
-            <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+            <Image src="/logo.png" alt="Logo" fill sizes="32px" className="object-cover" />
           </div>
           <h2 className="text-base font-black bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent whitespace-nowrap">
             Rental SaaS

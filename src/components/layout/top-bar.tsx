@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Bell, AlertTriangle, Wrench, ChevronRight } from "lucide-react";
+import { useState, useEffect, useSyncExternalStore } from "react";
+import { Bell, AlertTriangle, ChevronRight } from "lucide-react";
 import { fetchWithAuth } from "@/lib/auth-fetch";
 import { Notice, MaintenanceRequest } from "@/types";
 import { format } from "date-fns";
@@ -13,41 +13,48 @@ import {
 import Link from "next/link";
 import { GlobalSearch } from "./global-search";
 
+function getRoleSnapshot() {
+  const user = JSON.parse(localStorage.getItem("rental_user") || "{}");
+  return user.role || "landlord";
+}
+
+function subscribeToRole() {
+  return () => {};
+}
+
 export function TopBar() {
-  const [role, setRole] = useState<string | null>(null);
+  const role = useSyncExternalStore(subscribeToRole, getRoleSnapshot, () => null);
 
   // Tenant state
   const [notices, setNotices] = useState<Notice[]>([]);
   // Landlord state
   const [maintenance, setMaintenance] = useState<MaintenanceRequest[]>([]);
 
-  const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("rental_user") || "{}");
-    setRole(user.role || 'landlord');
-  }, []);
-
-  const fetchData = async () => {
     if (!role) return;
-    setLoading(true);
-    try {
-      if (role === 'tenant') {
-        const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/portal/notices`);
-        if (res.ok) setNotices(await res.json());
-      } else if (role === 'landlord') {
-        const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/maintenance?status=PENDING`);
-        if (res.ok) setMaintenance(await res.json());
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
+    let active = true;
 
-  useEffect(() => {
-    fetchData();
+    const fetchData = async () => {
+      try {
+        if (role === "tenant") {
+          const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/portal/notices`);
+          if (res.ok && active) setNotices(await res.json());
+        } else if (role === "landlord") {
+          const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/maintenance?status=PENDING`);
+          if (res.ok && active) setMaintenance(await res.json());
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    void fetchData();
+    return () => {
+      active = false;
+    };
   }, [role]);
 
   if (!role) return null;

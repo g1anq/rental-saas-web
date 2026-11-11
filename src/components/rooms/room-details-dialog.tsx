@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Room } from "@/types";
+import { Property, Room } from "@/types";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -27,7 +26,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { fetchWithAuth } from "@/lib/auth-fetch";
 
-export function RoomDetailsDialog({ room, properties = [] }: { room: Room, properties?: any[] }) {
+export function RoomDetailsDialog({ room, properties = [] }: { room: Room, properties?: Property[] }) {
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -93,7 +92,7 @@ export function RoomDetailsDialog({ room, properties = [] }: { room: Room, prope
         const data = await res.json();
         toast.error(data.message || "Lỗi khi cập nhật");
       }
-    } catch (e) {
+    } catch {
       toast.error("Không thể kết nối đến máy chủ");
     } finally {
       setLoading(false);
@@ -173,7 +172,7 @@ export function RoomDetailsDialog({ room, properties = [] }: { room: Room, prope
                 <Label>Trạng thái</Label>
                 <Select
                   value={formData.status}
-                  onValueChange={(val: any) => setFormData({ ...formData, status: val })}
+                  onValueChange={(val) => val && setFormData({ ...formData, status: val as Room["status"] })}
                 >
                   <SelectTrigger>
                     <SelectValue />

@@ -18,9 +18,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { fetchWithAuth } from "@/lib/auth-fetch";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
-import { Notice } from "@/types";
+import { Notice, Property, Room } from "@/types";
 
-export function UpdateNoticeDialog({ notice, rooms = [], properties = [] }: { notice: Notice, rooms?: any[], properties?: any[] }) {
+export function UpdateNoticeDialog({ notice, rooms = [], properties = [] }: { notice: Notice, rooms?: Room[], properties?: Property[] }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -54,8 +54,8 @@ export function UpdateNoticeDialog({ notice, rooms = [], properties = [] }: { no
       setOpen(false);
       toast.success("Đã cập nhật thông báo");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Đã xảy ra lỗi");
     } finally {
       setLoading(false);
     }
@@ -75,8 +75,8 @@ export function UpdateNoticeDialog({ notice, rooms = [], properties = [] }: { no
       setOpen(false);
       toast.success("Đã xóa thông báo");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Đã xảy ra lỗi");
     } finally {
       setDeleting(false);
     }
@@ -132,7 +132,7 @@ export function UpdateNoticeDialog({ notice, rooms = [], properties = [] }: { no
 
           <div className="space-y-2">
             <Label>Nội dung</Label>
-            <Textarea required value={content} onChange={(e: any) => setContent(e.target.value)} rows={4} />
+            <Textarea required value={content} onChange={(e) => setContent(e.target.value)} rows={4} />
           </div>
 
           <div className="flex items-center space-x-2 pt-2">

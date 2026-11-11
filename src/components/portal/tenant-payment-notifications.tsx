@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { io } from "socket.io-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { resolveBrowserApiUrl } from "@/lib/auth-fetch";
 
 type InvoicePaidNotification = {
   invoiceId: string;
@@ -14,23 +15,16 @@ type InvoicePaidNotification = {
   roomName: string;
 };
 
-function getAuthToken() {
-  const tokenCookie = document.cookie
-    .split("; ")
-    .find((cookie) => cookie.startsWith("rental_token="));
-  return tokenCookie ? decodeURIComponent(tokenCookie.slice("rental_token=".length)) : null;
-}
-
 export function TenantPaymentNotifications() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = getAuthToken();
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    if (!token || !apiUrl) return;
+    if (!apiUrl) return;
 
-    const socket = io(apiUrl, {
-      auth: { token },
+    const socketUrl = new URL(resolveBrowserApiUrl(apiUrl));
+    const socket = io(socketUrl.origin, {
+      withCredentials: true,
       transports: ["websocket"],
       reconnection: true,
     });

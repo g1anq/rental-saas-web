@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { fetchWithAuth } from "@/lib/auth-fetch";
-import { MaintenanceRequest } from "@/types";
+import { MaintenancePriority, MaintenanceRequest, MaintenanceStatus } from "@/types";
 import { toast } from "sonner";
 
 export function UpdateMaintenanceDialog({ request }: { request: MaintenanceRequest }) {
@@ -48,8 +48,8 @@ export function UpdateMaintenanceDialog({ request }: { request: MaintenanceReque
       setOpen(false);
       toast.success("Đã cập nhật yêu cầu bảo trì");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Đã xảy ra lỗi");
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,7 @@ export function UpdateMaintenanceDialog({ request }: { request: MaintenanceReque
 
           <div className="space-y-2">
             <Label>Trạng thái</Label>
-            <Select value={status} onValueChange={(val: any) => setStatus(val)}>
+            <Select value={status} onValueChange={(val) => val && setStatus(val as MaintenanceStatus)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -86,7 +86,7 @@ export function UpdateMaintenanceDialog({ request }: { request: MaintenanceReque
 
           <div className="space-y-2">
             <Label>Độ ưu tiên</Label>
-            <Select value={priority} onValueChange={(val: any) => setPriority(val)}>
+            <Select value={priority} onValueChange={(val) => val && setPriority(val as MaintenancePriority)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>

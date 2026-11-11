@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Room, Property } from "@/types";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

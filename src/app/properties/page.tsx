@@ -1,7 +1,7 @@
 import { Property } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchWithAuth } from "@/lib/auth-fetch";
-import { Building, MapPin, Search } from "lucide-react";
+import { Building, MapPin } from "lucide-react";
 import { CreatePropertyDialog } from "@/components/properties/create-property-dialog";
 import { UpdatePropertyDialog } from "@/components/properties/update-property-dialog";
 

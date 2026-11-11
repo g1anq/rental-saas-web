@@ -58,9 +58,9 @@ export function CreateInvoiceDialog({ activeContracts }: { activeContracts: Cont
       setNotes("");
       toast.success("Tạo hóa đơn thành công");
       router.refresh();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      toast.error(error.message || "Đã có lỗi xảy ra");
+      toast.error(error instanceof Error ? error.message : "Đã có lỗi xảy ra");
     } finally {
       setLoading(false);
     }

@@ -213,3 +213,12 @@ export interface UtilityReading {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Transaction {
+  id: string;
+  type: "INCOME" | "EXPENSE";
+  amount: number;
+  description: string;
+  date: string;
+  room?: Pick<Room, "name"> | null;
+}

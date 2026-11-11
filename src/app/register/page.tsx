@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { fetchWithAuth } from "@/lib/auth-fetch";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -21,7 +22,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+      const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password, phone }),
@@ -33,14 +34,13 @@ export default function RegisterPage() {
         throw new Error(data.message || "Đăng ký thất bại");
       }
 
-      document.cookie = `rental_token=${data.access_token}; path=/; max-age=86400`;
       localStorage.setItem("rental_user", JSON.stringify(data.user));
 
       toast.success("Đăng ký thành công!");
       router.push("/");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Đăng ký thất bại");
     } finally {
       setLoading(false);
     }

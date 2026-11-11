@@ -1,4 +1,5 @@
 import { fetchWithAuth } from "@/lib/auth-fetch";
+import Image from "next/image";
 import { format } from "date-fns";
 import { MaintenanceRequest } from "@/types";
 import { Wrench, Clock, CheckCircle2, AlertTriangle, AlertCircle } from "lucide-react";
@@ -79,7 +80,7 @@ export default async function TenantMaintenancePage() {
                 <p className="text-sm text-slate-600 whitespace-pre-wrap">{req.description}</p>
                 {req.imageUrl && (
                   <div className="mt-3">
-                    <img src={req.imageUrl} alt="Minh chứng" className="h-24 w-auto rounded-md object-cover border border-slate-200" />
+                    <Image src={req.imageUrl} alt="Minh chứng" width={240} height={96} unoptimized className="h-24 w-auto rounded-md border border-slate-200 object-cover" />
                   </div>
                 )}
                 {req.cost && req.cost > 0 && (

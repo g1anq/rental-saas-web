@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Contract } from "@/types";
+import { Contract, MaintenanceRequest } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
   Dialog as Sheet,
@@ -45,7 +45,7 @@ export function ContractDetailsSheet({ contract }: { contract: Contract }) {
   const [rmName, setRmName] = useState("");
   const [rmCccd, setRmCccd] = useState("");
   const [rmPhone, setRmPhone] = useState("");
-  const [pendingRequests, setPendingRequests] = useState<any[]>([]);
+  const [pendingRequests, setPendingRequests] = useState<MaintenanceRequest[]>([]);
 
   useEffect(() => {
     if (isSheetOpen) {
@@ -87,7 +87,7 @@ export function ContractDetailsSheet({ contract }: { contract: Contract }) {
         const data = await res.json();
         toast.error(data.message || "Lỗi khi thêm người ở ghép");
       }
-    } catch (e) {
+    } catch {
       toast.error("Không thể kết nối đến máy chủ");
     } finally {
       setLoading(false);
@@ -118,7 +118,7 @@ export function ContractDetailsSheet({ contract }: { contract: Contract }) {
         const data = await res.json();
         toast.error(data.message || "Lỗi khi kết thúc hợp đồng");
       }
-    } catch (e) {
+    } catch {
       toast.error("Không thể kết nối đến máy chủ");
     } finally {
       setLoading(false);
@@ -149,7 +149,7 @@ export function ContractDetailsSheet({ contract }: { contract: Contract }) {
         const data = await res.json();
         toast.error(data.message || "Lỗi khi gia hạn");
       }
-    } catch (e) {
+    } catch {
       toast.error("Không thể kết nối đến máy chủ");
     } finally {
       setLoading(false);
@@ -170,7 +170,7 @@ export function ContractDetailsSheet({ contract }: { contract: Contract }) {
       } else {
         toast.error("Lỗi khi xóa người ở ghép");
       }
-    } catch (e) {
+    } catch {
       toast.error("Lỗi kết nối mạng");
     } finally {
       setLoading(false);
@@ -223,7 +223,7 @@ export function ContractDetailsSheet({ contract }: { contract: Contract }) {
                 <div className="flex justify-between">
                   <span>Chu kỳ thanh toán:</span>
                   <span className="font-medium text-slate-800">
-                    {(contract as any).paymentCycle ? `${(contract as any).paymentCycle} tháng/lần` : "1 tháng/lần"}
+                    {contract.paymentCycle ? `${contract.paymentCycle} tháng/lần` : "1 tháng/lần"}
                   </span>
                 </div>
                 <div className="flex justify-between">

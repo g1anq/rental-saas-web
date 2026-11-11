@@ -68,8 +68,8 @@ export default function SettingsPage() {
       if (!res.ok) throw new Error("Cập nhật thất bại");
 
       toast.success("Cập nhật thông tin ngân hàng thành công!");
-    } catch (error: any) {
-      toast.error(error.message || "Đã xảy ra lỗi khi cập nhật");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Đã xảy ra lỗi khi cập nhật");
     } finally {
       setSaving(false);
     }

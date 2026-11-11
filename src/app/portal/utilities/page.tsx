@@ -1,4 +1,5 @@
 import { fetchWithAuth } from "@/lib/auth-fetch";
+import Image from "next/image";
 import { format } from "date-fns";
 import { UtilityReading } from "@/types";
 import { BarChart3, Zap, Droplet } from "lucide-react";
@@ -90,7 +91,9 @@ export default async function TenantUtilitiesPage() {
                 {reading.imageUrl && (
                   <div className="p-4 border-t bg-slate-50/50">
                     <p className="text-xs text-slate-500 mb-2 font-medium">Ảnh chụp công tơ/đồng hồ:</p>
-                    <img src={reading.imageUrl} alt="Minh chứng chỉ số" className="w-full h-32 rounded-md object-cover border border-slate-200" />
+                    <div className="relative h-32 w-full">
+                      <Image src={reading.imageUrl} alt="Minh chứng chỉ số" fill unoptimized sizes="100vw" className="rounded-md border border-slate-200 object-cover" />
+                    </div>
                   </div>
                 )}
               </CardContent>

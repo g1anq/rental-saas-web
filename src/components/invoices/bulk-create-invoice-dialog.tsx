@@ -56,9 +56,9 @@ export function BulkCreateInvoiceDialog() {
       setNotes("");
       toast.success(result.message || "Đã xử lý tạo hóa đơn hàng loạt!");
       router.refresh();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      toast.error(error.message || "Đã có lỗi xảy ra");
+      toast.error(error instanceof Error ? error.message : "Đã có lỗi xảy ra");
     } finally {
       setLoading(false);
     }

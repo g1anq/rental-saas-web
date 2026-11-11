@@ -1,13 +1,13 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
-import Cookies from "js-cookie";
+import { fetchWithAuth } from "@/lib/auth-fetch";
 
 function LoginForm() {
   const [role, setRole] = useState<"landlord" | "tenant">("landlord");
@@ -25,12 +25,6 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  useEffect(() => {
-    // Xóa cookie cũ khi vào trang login để tránh lặp token
-    Cookies.remove("rental_token");
-    localStorage.removeItem("rental_user");
-  }, []);
-
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -43,7 +37,7 @@ function LoginForm() {
           ? { email: email.trim().toLowerCase(), password: password.trim() }
           : { cccd: cccd.trim(), phone: phone.trim() };
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
+      const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -55,8 +49,6 @@ function LoginForm() {
         throw new Error(data.message || "Đăng nhập thất bại");
       }
 
-      // Chung 1 tên cookie "rental_token" để fetchWithAuth có thể đọc được
-      Cookies.set("rental_token", data.access_token, { expires: 7, path: '/' });
       localStorage.setItem("rental_user", JSON.stringify(data.user));
 
       const callbackUrl = searchParams.get("callbackUrl");

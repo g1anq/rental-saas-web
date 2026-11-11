@@ -58,7 +58,7 @@ export function InvoiceDetailsDialog({ invoice }: { invoice: Invoice }) {
       } else {
         setMessage({ type: "error", text: data.message || "Không thể gửi email" });
       }
-    } catch (error) {
+    } catch {
       setMessage({ type: "error", text: "Lỗi kết nối máy chủ" });
     } finally {
       setSendingEmail(false);

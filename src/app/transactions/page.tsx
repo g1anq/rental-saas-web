@@ -3,8 +3,9 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { Transaction } from "@/types";
 
-async function getTransactions() {
+async function getTransactions(): Promise<Transaction[]> {
   const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/transactions`, {
     cache: "no-store",
   });
@@ -20,8 +21,8 @@ export default async function TransactionsPage() {
     currency: "VND",
   });
 
-  const totalIncome = transactions.filter((t: any) => t.type === 'INCOME').reduce((sum: number, t: any) => sum + t.amount, 0);
-  const totalExpense = transactions.filter((t: any) => t.type === 'EXPENSE').reduce((sum: number, t: any) => sum + t.amount, 0);
+  const totalIncome = transactions.filter((t) => t.type === 'INCOME').reduce((sum, t) => sum + t.amount, 0);
+  const totalExpense = transactions.filter((t) => t.type === 'EXPENSE').reduce((sum, t) => sum + t.amount, 0);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -80,7 +81,7 @@ export default async function TransactionsPage() {
                   </td>
                 </tr>
               ) : (
-                transactions.map((tx: any) => (
+                transactions.map((tx) => (
                   <tr key={tx.id} className="border-b last:border-0 hover:bg-slate-50/50 transition-colors">
                     <td className="px-6 py-4 text-slate-600">
                       {format(new Date(tx.date), "dd/MM/yyyy HH:mm")}

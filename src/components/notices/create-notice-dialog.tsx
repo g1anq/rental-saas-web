@@ -18,8 +18,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { fetchWithAuth } from "@/lib/auth-fetch";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
+import { Property, Room } from "@/types";
 
-export function CreateNoticeDialog({ rooms = [], properties = [] }: { rooms?: any[], properties?: any[] }) {
+export function CreateNoticeDialog({ rooms = [], properties = [] }: { rooms?: Room[], properties?: Property[] }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -56,8 +57,8 @@ export function CreateNoticeDialog({ rooms = [], properties = [] }: { rooms?: an
       setIsImportant(false);
       setRoomId("");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Đã xảy ra lỗi");
     } finally {
       setLoading(false);
     }
@@ -115,7 +116,7 @@ export function CreateNoticeDialog({ rooms = [], properties = [] }: { rooms?: an
 
           <div className="space-y-2">
             <Label>Nội dung</Label>
-            <Textarea required value={content} onChange={(e: any) => setContent(e.target.value)} placeholder="Ghi chi tiết nội dung thông báo..." rows={4} />
+            <Textarea required value={content} onChange={(e) => setContent(e.target.value)} placeholder="Ghi chi tiết nội dung thông báo..." rows={4} />
           </div>
 
           <div className="flex items-center space-x-2 pt-2">

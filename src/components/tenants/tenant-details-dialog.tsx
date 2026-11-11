@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Tenant } from "@/types";
 import {
   Dialog,
@@ -106,14 +107,14 @@ export function TenantDetailsDialog({ tenant }: { tenant: Tenant }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="border rounded-xl p-3 bg-slate-50/50 flex flex-col items-center justify-center min-h-[160px] text-center">
                 {tenant.idCardFront ? (
-                  <img src={tenant.idCardFront} alt="CCCD Mặt Trước" className="max-h-40 object-contain rounded" />
+                  <Image src={tenant.idCardFront} alt="CCCD Mặt Trước" width={360} height={160} unoptimized className="max-h-40 w-auto object-contain rounded" />
                 ) : (
                   <div className="text-slate-400 text-sm">Chưa có ảnh CCCD mặt trước</div>
                 )}
               </div>
               <div className="border rounded-xl p-3 bg-slate-50/50 flex flex-col items-center justify-center min-h-[160px] text-center">
                 {tenant.idCardBack ? (
-                  <img src={tenant.idCardBack} alt="CCCD Mặt Sau" className="max-h-40 object-contain rounded" />
+                  <Image src={tenant.idCardBack} alt="CCCD Mặt Sau" width={360} height={160} unoptimized className="max-h-40 w-auto object-contain rounded" />
                 ) : (
                   <div className="text-slate-400 text-sm">Chưa có ảnh CCCD mặt sau</div>
                 )}

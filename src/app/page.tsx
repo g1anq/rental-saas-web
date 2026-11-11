@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Home, ReceiptText, ShieldCheck, Smartphone, Zap, Star, Quote } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, CheckCircle2, Home, ReceiptText, ShieldCheck, Smartphone, Zap, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function LandingPage() {
@@ -10,7 +11,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="relative w-10 h-10 overflow-hidden rounded-xl shadow-[0_0_15px_rgba(59,130,246,0.5)] ring-1 ring-white/20">
-              <img src="/logo.png" alt="Rental SaaS Logo" className="w-full h-full object-cover" />
+              <Image src="/logo.png" alt="Rental SaaS Logo" fill sizes="40px" className="object-cover" />
             </div>
             <span className="text-xl font-bold tracking-tight text-white hidden sm:block">Rental SaaS</span>
           </div>
@@ -269,7 +270,7 @@ export default function LandingPage() {
 }
 
 // Temporary icon component for BarChart3 (lucide-react)
-function BarChart3(props: any) {
+function BarChart3(props: React.ComponentProps<"svg">) {
   return (
     <svg
       {...props}
@@ -308,7 +309,7 @@ function TestimonialCard({ name, role, content }: { name: string, role: string, 
     <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col justify-between">
       <div>
         <Quote className="w-10 h-10 text-slate-700 mb-6" />
-        <p className="text-slate-300 italic mb-8">"{content}"</p>
+        <p className="text-slate-300 italic mb-8">&quot;{content}&quot;</p>
       </div>
       <div className="flex items-center gap-4">
         <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center font-bold text-slate-400">

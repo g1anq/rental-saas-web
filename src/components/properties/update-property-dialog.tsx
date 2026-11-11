@@ -45,8 +45,8 @@ export function UpdatePropertyDialog({ property }: { property: Property }) {
       setOpen(false);
       toast.success("Đã cập nhật khu trọ");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Đã xảy ra lỗi");
     } finally {
       setLoading(false);
     }
@@ -66,8 +66,8 @@ export function UpdatePropertyDialog({ property }: { property: Property }) {
       setOpen(false);
       toast.success("Đã xóa khu trọ");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Đã xảy ra lỗi");
     } finally {
       setDeleting(false);
     }
@@ -96,7 +96,7 @@ export function UpdatePropertyDialog({ property }: { property: Property }) {
 
           <div className="space-y-2">
             <Label>Mô tả (Tùy chọn)</Label>
-            <Textarea value={description} onChange={(e: any) => setDescription(e.target.value)} rows={3} />
+            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
           </div>
 
           <div className="flex justify-between pt-4">

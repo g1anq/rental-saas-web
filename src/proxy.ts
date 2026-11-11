@@ -11,40 +11,56 @@ function isPublicRoute(pathname: string) {
 }
 
 export function proxy(request: NextRequest) {
-  const token = request.cookies.get('rental_token')?.value;
+  const token = request.cookies.get('rental_session')?.value;
   const { pathname } = request.nextUrl;
-
-  // Luôn truyền pathname vào header để layout.tsx đọc được
+  const isAuthPage = isPublicRoute(pathname);
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-pathname', pathname);
 
-  const isAuthPage = isPublicRoute(pathname);
-
-  // Chưa đăng nhập + không phải trang auth → redirect về login
-  if (!token && !isAuthPage) {
+  const clearLegacyCookie = (response: NextResponse) => {
+    response.cookies.delete('rental_token');
+    return response;
+  };
+  const redirectToLogin = () => {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(loginUrl);
+  };
+
+  let role: string | undefined;
+  if (token) {
+    try {
+      const payloadBase64 = token.split('.')[1];
+      const payloadDecoded: { exp?: number; role?: string } = JSON.parse(atob(payloadBase64));
+      if (
+        typeof payloadDecoded.exp !== 'number' ||
+        payloadDecoded.exp * 1000 <= Date.now() ||
+        (payloadDecoded.role !== 'tenant' && payloadDecoded.role !== 'landlord')
+      ) {
+        throw new Error('Invalid or expired session');
+      }
+      role = payloadDecoded.role;
+    } catch {
+      const response = isAuthPage
+        ? NextResponse.next({ request: { headers: requestHeaders } })
+        : redirectToLogin();
+      response.cookies.delete('rental_session');
+      return clearLegacyCookie(response);
+    }
+  }
+
+  // Chưa đăng nhập + không phải trang auth → redirect về login
+  if (!token && !isAuthPage) {
+    return clearLegacyCookie(redirectToLogin());
   }
 
   // Đã đăng nhập + vào trang login/register hoặc trang chủ -> redirect về dashboard/portal
   if (token && (pathname === '/' || pathname === '/login' || pathname === '/register')) {
-    try {
-      const payloadBase64 = token.split('.')[1];
-      const payloadDecoded = JSON.parse(atob(payloadBase64));
-      if (payloadDecoded.role === 'tenant') {
-        return NextResponse.redirect(new URL('/portal', request.url));
-      } else {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-      }
-    } catch {
-      const response = NextResponse.redirect(new URL('/login', request.url));
-      response.cookies.delete('rental_token');
-      return response;
-    }
+    const destination = role === 'tenant' ? '/portal' : '/dashboard';
+    return clearLegacyCookie(NextResponse.redirect(new URL(destination, request.url)));
   }
 
-  return NextResponse.next({ request: { headers: requestHeaders } });
+  return clearLegacyCookie(NextResponse.next({ request: { headers: requestHeaders } }));
 }
 
 export const config = {

@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Loader2, TrendingUp, TrendingDown, DollarSign, Receipt, Download } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, YAxis, Line, ComposedChart } from "recharts";
+import { Bar, CartesianGrid, XAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, YAxis, Line, ComposedChart } from "recharts";
 
 interface RevenueStats {
   year: number;
@@ -229,9 +229,9 @@ export default function ReportsPage() {
                     <Tooltip
                       cursor={{ fill: "rgba(241, 245, 249, 0.5)" }}
                       contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)", zIndex: 100 }}
-                      formatter={(value: any, name: any) => {
+                      formatter={(value, name) => {
                         if (name === "Hóa đơn") return [value, name];
-                        return [formatter.format(value), name];
+                        return [formatter.format(Number(value)), name];
                       }}
                     />
                     <Legend wrapperStyle={{ paddingTop: "20px" }} />
@@ -280,7 +280,7 @@ export default function ReportsPage() {
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: any) => formatter.format(value)}
+                      formatter={(value) => formatter.format(Number(value))}
                       contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
                     />
                     <Legend layout="vertical" verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: "20px", fontSize: "12px" }} />

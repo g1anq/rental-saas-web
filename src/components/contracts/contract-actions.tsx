@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { MoreHorizontal, CalendarClock, Ban, Check } from "lucide-react";
+import { MoreHorizontal, CalendarClock, Ban } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { fetchWithAuth } from "@/lib/auth-fetch";
@@ -48,7 +48,7 @@ export function ContractActions({ contract }: { contract: Contract }) {
         const data = await res.json();
         toast.error(data.message || "Lỗi khi kết thúc hợp đồng");
       }
-    } catch (e) {
+    } catch {
       toast.error("Không thể kết nối đến máy chủ");
     } finally {
       setLoading(false);
@@ -78,7 +78,7 @@ export function ContractActions({ contract }: { contract: Contract }) {
         const data = await res.json();
         toast.error(data.message || "Lỗi khi gia hạn");
       }
-    } catch (e) {
+    } catch {
       toast.error("Không thể kết nối đến máy chủ");
     } finally {
       setLoading(false);

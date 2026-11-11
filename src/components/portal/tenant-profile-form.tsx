@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,7 +47,7 @@ export function TenantProfileForm({ profile }: { profile: Tenant }) {
         const err = await res.json();
         toast.error(err.message || "Đã xảy ra lỗi khi cập nhật");
       }
-    } catch (error) {
+    } catch {
       toast.error("Lỗi kết nối đến máy chủ");
     } finally {
       setLoading(false);
@@ -78,8 +79,8 @@ export function TenantProfileForm({ profile }: { profile: Tenant }) {
       <div className="space-y-4 pt-2 border-t mt-4">
         <h3 className="text-sm font-semibold text-slate-700">Ảnh đại diện (Avatar)</h3>
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center border">
-            {avatar ? <img src={avatar} alt="Avatar" className="w-full h-full object-cover" /> : <User className="w-8 h-8 text-slate-400" />}
+          <div className="relative w-16 h-16 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center border">
+            {avatar ? <Image src={avatar} alt="Avatar" fill unoptimized sizes="64px" className="object-cover" /> : <User className="w-8 h-8 text-slate-400" />}
           </div>
           <div className="space-y-2 flex-1">
             <Label>Tải ảnh mới</Label>
@@ -94,12 +95,12 @@ export function TenantProfileForm({ profile }: { profile: Tenant }) {
           <div className="space-y-2">
             <Label>Mặt trước</Label>
             <Input type="file" accept="image/*" onChange={(e) => handleImageChange(e, setIdCardFront)} />
-            {idCardFront && <img src={idCardFront} alt="CCCD Trước" className="h-20 w-auto rounded border" />}
+            {idCardFront && <Image src={idCardFront} alt="CCCD Trước" width={160} height={80} unoptimized className="h-20 w-auto rounded border object-contain" />}
           </div>
           <div className="space-y-2">
             <Label>Mặt sau</Label>
             <Input type="file" accept="image/*" onChange={(e) => handleImageChange(e, setIdCardBack)} />
-            {idCardBack && <img src={idCardBack} alt="CCCD Sau" className="h-20 w-auto rounded border" />}
+            {idCardBack && <Image src={idCardBack} alt="CCCD Sau" width={160} height={80} unoptimized className="h-20 w-auto rounded border object-contain" />}
           </div>
         </div>
       </div>

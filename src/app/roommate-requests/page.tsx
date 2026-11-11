@@ -1,8 +1,7 @@
-import { MaintenanceRequest, Room } from "@/types";
+import { MaintenanceRequest } from "@/types";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { fetchWithAuth } from "@/lib/auth-fetch";
-import { CreateMaintenanceDialog } from "@/components/maintenance/create-maintenance-dialog";
 import { UpdateMaintenanceDialog } from "@/components/maintenance/update-maintenance-dialog";
 import { format } from "date-fns";
 import { PropertyFilter } from "@/components/properties/property-filter";
@@ -13,14 +12,6 @@ async function getMaintenanceRequests(propertyId?: string): Promise<MaintenanceR
     : `${process.env.NEXT_PUBLIC_API_URL}/maintenance`;
 
   const res = await fetchWithAuth(url, {
-    cache: "no-store",
-  });
-  if (!res.ok) return [];
-  return res.json();
-}
-
-async function getRooms(): Promise<Room[]> {
-  const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
     cache: "no-store",
   });
   if (!res.ok) return [];
@@ -51,13 +42,11 @@ async function getProperties() {
 
 export default async function RoommateRequestsPage({ searchParams }: { searchParams: Promise<{ propertyId?: string }> }) {
   const resolvedParams = await searchParams;
-  const [requests, rooms, properties] = await Promise.all([
+  const [requests, properties] = await Promise.all([
     getMaintenanceRequests(resolvedParams.propertyId),
-    getRooms(),
     getProperties(),
   ]);
 
-  const formatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
   const roommateRequests = requests.filter(req => req.title.startsWith("Yêu cầu"));
 
   return (

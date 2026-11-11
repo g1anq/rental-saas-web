@@ -50,9 +50,9 @@ export function BulkSendRemindersDialog() {
       setOpen(false);
       toast.success(result.message || "Đã gửi email nhắc nợ!");
       router.refresh();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      toast.error(error.message || "Đã có lỗi xảy ra");
+      toast.error(error instanceof Error ? error.message : "Đã có lỗi xảy ra");
     } finally {
       setLoading(false);
     }

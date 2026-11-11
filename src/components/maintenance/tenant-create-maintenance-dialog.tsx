@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { fetchWithAuth } from "@/lib/auth-fetch";
 import {
   Dialog,
@@ -64,7 +65,7 @@ export function TenantCreateMaintenanceDialog() {
         const data = await res.json();
         toast.error(data.message || "Không thể gửi yêu cầu");
       }
-    } catch (error) {
+    } catch {
       toast.error("Lỗi kết nối máy chủ");
     } finally {
       setLoading(false);
@@ -124,7 +125,7 @@ export function TenantCreateMaintenanceDialog() {
             />
             {formData.imageUrl && (
               <div className="mt-2 relative w-full h-32 rounded-md overflow-hidden border border-slate-200">
-                <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                <Image src={formData.imageUrl} alt="Preview" fill unoptimized sizes="100vw" className="object-cover" />
                 <button
                   type="button"
                   onClick={() => setFormData(prev => ({...prev, imageUrl: ""}))}

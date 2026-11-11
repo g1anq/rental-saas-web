@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Wrench, Loader2, Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { fetchWithAuth } from "@/lib/auth-fetch";
-import { Room } from "@/types";
+import { MaintenancePriority, Room } from "@/types";
 import { toast } from "sonner";
 
 export function CreateMaintenanceDialog({ rooms }: { rooms: Room[] }) {
@@ -53,8 +53,8 @@ export function CreateMaintenanceDialog({ rooms }: { rooms: Room[] }) {
       setDescription("");
       setRoomId("");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Đã xảy ra lỗi");
     } finally {
       setLoading(false);
     }
@@ -74,7 +74,7 @@ export function CreateMaintenanceDialog({ rooms }: { rooms: Room[] }) {
         <form onSubmit={onSubmit} className="space-y-4 pt-4">
           <div className="space-y-2">
             <Label>Phòng bị sự cố <span className="text-red-500">*</span></Label>
-            <Select value={roomId} onValueChange={(val: any) => setRoomId(val || "")}>
+            <Select value={roomId} onValueChange={(val) => setRoomId(val || "")}>
               <SelectTrigger>
                 <SelectValue placeholder="Chọn phòng..." />
               </SelectTrigger>
@@ -93,7 +93,7 @@ export function CreateMaintenanceDialog({ rooms }: { rooms: Room[] }) {
 
           <div className="space-y-2">
             <Label>Độ ưu tiên</Label>
-            <Select value={priority} onValueChange={(val: any) => setPriority(val || "")}>
+            <Select value={priority} onValueChange={(val) => val && setPriority(val as MaintenancePriority)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -108,7 +108,7 @@ export function CreateMaintenanceDialog({ rooms }: { rooms: Room[] }) {
 
           <div className="space-y-2">
             <Label>Mô tả chi tiết</Label>
-            <Textarea value={description} onChange={(e: any) => setDescription(e.target.value)} placeholder="Ghi chú thêm về sự cố..." />
+            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Ghi chú thêm về sự cố..." />
           </div>
 
           <div className="flex justify-end gap-3 pt-4">

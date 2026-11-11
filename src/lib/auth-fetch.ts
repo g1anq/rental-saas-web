@@ -1,4 +1,4 @@
-function resolveRequestUrl(url: string): string {
+export function resolveBrowserApiUrl(url: string): string {
   if (typeof window === "undefined") {
     return url;
   }
@@ -17,20 +17,32 @@ function resolveRequestUrl(url: string): string {
   return requestUrl.toString();
 }
 
+function resolveInternalRequestUrl(url: string): string {
+  const internalApiUrl = process.env.INTERNAL_API_URL;
+  const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!internalApiUrl || !publicApiUrl) return url;
+
+  const requestUrl = new URL(url);
+  const publicBase = new URL(publicApiUrl);
+  const publicPath = publicBase.pathname.replace(/\/$/, "");
+  if (
+    requestUrl.origin !== publicBase.origin ||
+    (publicPath && requestUrl.pathname !== publicPath && !requestUrl.pathname.startsWith(`${publicPath}/`))
+  ) {
+    return url;
+  }
+
+  const apiPath = requestUrl.pathname.slice(publicPath.length) || "/";
+  return new URL(`${apiPath}${requestUrl.search}${requestUrl.hash}`, internalApiUrl).toString();
+}
+
 export async function fetchWithAuth(url: string, options: RequestInit = {}) {
   let token = "";
 
-  // Check if we are running on the server
   if (typeof window === "undefined") {
     const { cookies } = await import("next/headers");
     const cookieStore = await cookies();
-    token = cookieStore.get("rental_token")?.value || "";
-  } else {
-    // We are running on the client
-    const match = document.cookie.match(new RegExp("(^| )rental_token=([^;]+)"));
-    if (match) {
-      token = match[2];
-    }
+    token = cookieStore.get("rental_session")?.value || "";
   }
 
   const headers = new Headers(options.headers || {});
@@ -39,8 +51,13 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  return fetch(resolveRequestUrl(url), {
+  const requestUrl = typeof window === "undefined"
+    ? resolveInternalRequestUrl(url)
+    : resolveBrowserApiUrl(url);
+
+  return fetch(requestUrl, {
     ...options,
+    credentials: options.credentials ?? "include",
     headers,
   });
 }

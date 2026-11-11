@@ -50,12 +50,16 @@ export function CreateUtilityReadingDialog({ contractId }: { contractId: string 
           }
         })
         .catch(console.error);
-    } else {
-      // reset form
+    }
+  }, [open, contractId]);
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (!nextOpen) {
       setElectricityCurr("");
       setWaterCurr("");
     }
-  }, [open, contractId]);
+  };
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -81,6 +85,8 @@ export function CreateUtilityReadingDialog({ contractId }: { contractId: string 
       if (!res.ok) throw new Error("Lỗi khi ghi chỉ số");
 
       setOpen(false);
+      setElectricityCurr("");
+      setWaterCurr("");
       toast.success("Ghi chỉ số thành công");
       router.refresh();
     } catch (error) {
@@ -92,7 +98,7 @@ export function CreateUtilityReadingDialog({ contractId }: { contractId: string 
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger className="text-indigo-600 hover:text-indigo-900 font-medium text-sm border border-indigo-200 px-2 py-1 rounded">
         Ghi chỉ số Đ/N
       </DialogTrigger>

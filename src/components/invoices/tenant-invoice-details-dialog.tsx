@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Invoice } from "@/types";
 import {
   Dialog,
@@ -93,9 +94,12 @@ export function TenantInvoiceDetailsDialog({
               {qrUrl ? (
                 <div className="flex flex-col items-center space-y-3">
                   <div className="bg-white p-3 rounded-2xl shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
-                    <img
+                    <Image
                       src={qrUrl}
                       alt="VietQR Thanh Toán"
+                      width={224}
+                      height={224}
+                      unoptimized
                       className="h-48 w-48 rounded-lg object-contain sm:h-56 sm:w-56"
                     />
                   </div>

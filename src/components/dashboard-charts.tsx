@@ -43,7 +43,7 @@ export function DashboardCharts({ data }: DashboardChartsProps) {
           <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
           <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={formatCompact} />
           <Tooltip
-            formatter={(value: any, name: any) => [
+            formatter={(value, name) => [
               formatCurrency(Number(value || 0)),
               name === 'income' ? 'Tổng thu' : name === 'expense' ? 'Tổng chi' : 'Lợi nhuận ròng'
             ]}
@@ -87,7 +87,7 @@ export function DashboardCharts({ data }: DashboardChartsProps) {
                   <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={formatCompact} />
                   <Tooltip
-                    formatter={(value: any) => [formatCurrency(Number(value || 0)), 'Doanh thu']}
+                    formatter={(value) => [formatCurrency(Number(value || 0)), 'Doanh thu']}
                     cursor={{ fill: "rgba(0,0,0,0.05)" }}
                   />
                   <Legend wrapperStyle={{ fontSize: '12px' }} />

@@ -1,6 +1,4 @@
 import { Room } from "@/types";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { CreateRoomDialog } from "@/components/rooms/create-room-dialog";
 import { RoomsView } from "@/components/rooms/rooms-view";
 import { fetchWithAuth } from "@/lib/auth-fetch";
@@ -30,11 +28,6 @@ async function getProperties() {
 export default async function RoomsPage({ searchParams }: { searchParams: Promise<{ propertyId?: string }> }) {
   const resolvedParams = await searchParams;
   const [rooms, properties] = await Promise.all([getRooms(resolvedParams.propertyId), getProperties()]);
-
-  const formatter = new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-  });
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">

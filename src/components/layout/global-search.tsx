@@ -5,15 +5,36 @@ import { Search, Home, Users, Building, FileText, Receipt, Loader2 } from "lucid
 import { fetchWithAuth } from "@/lib/auth-fetch";
 import { useRouter } from "next/navigation";
 import { Command } from "cmdk";
-import { Dialog } from "@/components/ui/dialog";
+
+interface SearchResults {
+  rooms: { id: string; name: string; status: string }[];
+  tenants: { id: string; fullName: string; phone: string }[];
+  properties: { id: string; name: string }[];
+  contracts: { id: string; tenant: { fullName: string }; room: { name: string }; isActive: boolean }[];
+  invoices: {
+    id: string;
+    invoiceCode: string | null;
+    month: number;
+    year: number;
+    totalAmount: number;
+    status: string;
+    contract: { room: { name: string } };
+  }[];
+}
+
+const EMPTY_RESULTS: SearchResults = {
+  rooms: [],
+  tenants: [],
+  properties: [],
+  contracts: [],
+  invoices: [],
+};
 
 export function GlobalSearch() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<{ rooms: any[]; tenants: any[]; properties: any[]; contracts: any[]; invoices: any[] }>({
-    rooms: [], tenants: [], properties: [], contracts: [], invoices: []
-  });
+  const [results, setResults] = useState<SearchResults>(EMPTY_RESULTS);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,7 +50,6 @@ export function GlobalSearch() {
 
   useEffect(() => {
     if (!query) {
-      setResults({ rooms: [], tenants: [], properties: [], contracts: [], invoices: [] });
       return;
     }
     const timer = setTimeout(async () => {
@@ -37,7 +57,7 @@ export function GlobalSearch() {
       try {
         const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/search?q=${encodeURIComponent(query)}`);
         if (res.ok) {
-          const data = await res.json();
+          const data = (await res.json()) as SearchResults;
           setResults(data);
         }
       } catch (e) {
@@ -53,6 +73,8 @@ export function GlobalSearch() {
     setOpen(false);
     router.push(href);
   };
+
+  const visibleResults = query ? results : EMPTY_RESULTS;
 
   return (
     <>
@@ -108,19 +130,19 @@ export function GlobalSearch() {
                 </div>
               )}
               {query && !loading &&
-                results.rooms.length === 0 &&
-                results.tenants.length === 0 &&
-                results.properties.length === 0 &&
-                results.contracts.length === 0 &&
-                results.invoices.length === 0 && (
+                visibleResults.rooms.length === 0 &&
+                visibleResults.tenants.length === 0 &&
+                visibleResults.properties.length === 0 &&
+                visibleResults.contracts.length === 0 &&
+                visibleResults.invoices.length === 0 && (
                 <div className="p-12 text-center text-sm text-slate-500">
-                  Không tìm thấy kết quả nào cho "{query}"
+                  Không tìm thấy kết quả nào cho &quot;{query}&quot;
                 </div>
               )}
 
-              {results.invoices?.length > 0 && (
+              {visibleResults.invoices.length > 0 && (
                 <Command.Group heading="Hóa đơn" className="px-2 py-1 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                  {results.invoices.map((inv) => (
+                  {visibleResults.invoices.map((inv) => (
                     <Command.Item
                       key={inv.id}
                       value={`invoice-${inv.id}`}
@@ -146,9 +168,9 @@ export function GlobalSearch() {
                 </Command.Group>
               )}
 
-              {results.contracts?.length > 0 && (
+              {visibleResults.contracts.length > 0 && (
                 <Command.Group heading="Hợp đồng" className="px-2 py-1 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                  {results.contracts.map((c) => (
+                  {visibleResults.contracts.map((c) => (
                     <Command.Item
                       key={c.id}
                       value={`contract-${c.id}`}
@@ -167,9 +189,9 @@ export function GlobalSearch() {
                 </Command.Group>
               )}
 
-              {results.rooms?.length > 0 && (
+              {visibleResults.rooms.length > 0 && (
                 <Command.Group heading="Phòng trọ" className="px-2 py-1 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                  {results.rooms.map((room) => (
+                  {visibleResults.rooms.map((room) => (
                     <Command.Item
                       key={room.id}
                       value={`room-${room.id}`}
@@ -188,9 +210,9 @@ export function GlobalSearch() {
                 </Command.Group>
               )}
 
-              {results.tenants?.length > 0 && (
+              {visibleResults.tenants.length > 0 && (
                 <Command.Group heading="Khách thuê" className="px-2 py-1 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                  {results.tenants.map((tenant) => (
+                  {visibleResults.tenants.map((tenant) => (
                     <Command.Item
                       key={tenant.id}
                       value={`tenant-${tenant.id}`}
@@ -209,9 +231,9 @@ export function GlobalSearch() {
                 </Command.Group>
               )}
 
-              {results.properties?.length > 0 && (
+              {visibleResults.properties.length > 0 && (
                 <Command.Group heading="Khu trọ" className="px-2 py-1 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                  {results.properties.map((prop) => (
+                  {visibleResults.properties.map((prop) => (
                     <Command.Item
                       key={prop.id}
                       value={`prop-${prop.id}`}

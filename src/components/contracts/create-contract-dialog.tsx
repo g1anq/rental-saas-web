@@ -98,9 +98,9 @@ export function CreateContractDialog({ availableRooms, tenants }: CreateContract
       setCustomServices([]);
       toast.success("Tạo hợp đồng thành công");
       router.refresh(); // Reload data
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      toast.error(error.message || "Đã có lỗi xảy ra");
+      toast.error(error instanceof Error ? error.message : "Đã có lỗi xảy ra");
     } finally {
       setLoading(false);
     }

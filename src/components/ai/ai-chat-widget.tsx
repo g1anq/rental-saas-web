@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useSyncExternalStore } from "react";
 import { MessageSquare, X, Send, Bot, User, Loader2 } from "lucide-react";
 import { fetchWithAuth } from "@/lib/auth-fetch";
 
@@ -8,6 +8,15 @@ type Message = {
   role: "user" | "model";
   content: string;
 };
+
+function getUserRoleSnapshot() {
+  const user = JSON.parse(localStorage.getItem("rental_user") || "{}");
+  return user.role === "landlord";
+}
+
+function subscribeToUserRole() {
+  return () => {};
+}
 
 export function AiChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,14 +28,7 @@ export function AiChatWidget() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Only show for landlord
-  const [isLandlord, setIsLandlord] = useState(false);
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("rental_user") || "{}");
-    if (user?.role === 'landlord') {
-      setIsLandlord(true);
-    }
-  }, []);
+  const isLandlord = useSyncExternalStore(subscribeToUserRole, getUserRoleSnapshot, () => false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -61,7 +63,7 @@ export function AiChatWidget() {
       } else {
         setMessages((prev) => [...prev, { role: "model", content: "Xin lỗi, đã có lỗi xảy ra hoặc chưa cấu hình API Key. Vui lòng thử lại sau." }]);
       }
-    } catch (e) {
+    } catch {
       setMessages((prev) => [...prev, { role: "model", content: "Lỗi kết nối máy chủ." }]);
     } finally {
       setLoading(false);

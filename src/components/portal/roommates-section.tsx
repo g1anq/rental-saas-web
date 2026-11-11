@@ -47,7 +47,7 @@ export function RoommatesSection({ roommates }: { roommates: Tenant[] }) {
         const err = await res.json();
         toast.error(err.message || "Không thể gửi yêu cầu");
       }
-    } catch (e) {
+    } catch {
       toast.error("Lỗi kết nối");
     } finally {
       setLoading(false);

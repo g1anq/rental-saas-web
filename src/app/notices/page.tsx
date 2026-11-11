@@ -6,8 +6,6 @@ import { CreateNoticeDialog } from "@/components/notices/create-notice-dialog";
 import { UpdateNoticeDialog } from "@/components/notices/update-notice-dialog";
 import { format } from "date-fns";
 import { Bell, AlertTriangle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-
 import { PropertyFilter } from "@/components/properties/property-filter";
 
 async function getNotices(propertyId?: string): Promise<Notice[]> {

@@ -1,4 +1,5 @@
 import { fetchWithAuth } from "@/lib/auth-fetch";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tenant, Contract } from "@/types";
 import { User, Phone, Mail, CreditCard } from "lucide-react";
@@ -29,9 +30,9 @@ export default async function TenantProfilePage() {
       <div className="grid md:grid-cols-3 gap-6">
         <Card className="md:col-span-1 border-none shadow-md bg-white/70 backdrop-blur-md h-fit">
           <CardHeader className="bg-slate-50/50 border-b pb-4 text-center">
-            <div className="w-24 h-24 bg-slate-200 rounded-full mx-auto mb-4 flex items-center justify-center text-slate-400 overflow-hidden shadow-inner">
+            <div className="relative w-24 h-24 bg-slate-200 rounded-full mx-auto mb-4 flex items-center justify-center text-slate-400 overflow-hidden shadow-inner">
               {profile.avatar ? (
-                <img src={profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                <Image src={profile.avatar} alt="Avatar" fill unoptimized sizes="96px" className="object-cover" />
               ) : (
                 <User className="w-12 h-12" />
               )}
